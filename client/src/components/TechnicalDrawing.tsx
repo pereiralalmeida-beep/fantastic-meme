@@ -205,7 +205,7 @@ export default function TechnicalDrawing({
         className={`w-full h-full ${
           measurement.isActive ? 'cursor-crosshair' : isDragging ? 'cursor-grabbing' : 'cursor-grab'
         }`}
-        viewBox={`${-viewState.pan.x - 60} ${-viewState.pan.y - 60} ${(width + 120)/viewState.zoom} ${(height + 120)/viewState.zoom}`}
+        viewBox={`${-viewState.pan.x - 80} ${-viewState.pan.y - 80} ${(width + 160)/viewState.zoom} ${(height + 160)/viewState.zoom}`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
