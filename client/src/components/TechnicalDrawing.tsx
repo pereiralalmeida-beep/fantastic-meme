@@ -228,6 +228,7 @@ export default function TechnicalDrawing({
           scale={scale}
           maxLength={layoutSpec.totalDimensions.length}
           maxWidth={layoutSpec.totalDimensions.width}
+          layoutSpec={layoutSpec}
           visibility={layoutSpec.layerVisibility}
         />
         

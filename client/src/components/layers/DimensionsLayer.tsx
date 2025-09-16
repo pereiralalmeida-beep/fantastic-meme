@@ -188,31 +188,206 @@ export default function DimensionsLayer({
         })}
       </g>
 
-      {/* Chain dimensions (partial lengths) */}
-      <g opacity="0.7">
-        {/* Show some intermediate dimensions */}
+      {/* Chain dimensions (partial lengths) - Technical Engineering Style */}
+      <g opacity="0.8">
+        {/* Horizontal chain dimensions */}
         {usefulArea && (
           <g>
-            {/* Distance from edge to useful area */}
+            {/* Distance from left edge to useful area */}
             <line
               x1={0}
               y1={-15}
               x2={usefulArea.position.x * scale}
               y2={-15}
-              stroke="hsl(var(--muted-foreground))"
+              stroke="hsl(var(--chart-3))"
               strokeWidth="0.8"
-              strokeDasharray="2,2"
+              strokeDasharray="3,2"
             />
             <text
               x={(usefulArea.position.x / 2) * scale}
-              y={-18}
+              y={-20}
               textAnchor="middle"
-              className="fill-muted-foreground text-xs font-mono"
+              className="fill-chart-3 text-xs font-mono font-bold"
             >
               {usefulArea.position.x.toFixed(1)}
             </text>
+            
+            {/* Useful area length (internal) */}
+            <line
+              x1={usefulArea.position.x * scale}
+              y1={-15}
+              x2={(usefulArea.position.x + usefulArea.dimensions.length) * scale}
+              y2={-15}
+              stroke="hsl(var(--chart-2))"
+              strokeWidth="1.2"
+            />
+            <text
+              x={(usefulArea.position.x + usefulArea.dimensions.length / 2) * scale}
+              y={-20}
+              textAnchor="middle"
+              className="fill-chart-2 text-xs font-mono font-bold"
+            >
+              {usefulArea.dimensions.length.toFixed(1)}
+            </text>
+            
+            {/* Distance from useful area to right edge */}
+            <line
+              x1={(usefulArea.position.x + usefulArea.dimensions.length) * scale}
+              y1={-15}
+              x2={svgWidth}
+              y2={-15}
+              stroke="hsl(var(--chart-3))"
+              strokeWidth="0.8"
+              strokeDasharray="3,2"
+            />
+            <text
+              x={(usefulArea.position.x + usefulArea.dimensions.length + (layoutSpec.totalDimensions.length - usefulArea.position.x - usefulArea.dimensions.length) / 2) * scale}
+              y={-20}
+              textAnchor="middle"
+              className="fill-chart-3 text-xs font-mono font-bold"
+            >
+              {(layoutSpec.totalDimensions.length - usefulArea.position.x - usefulArea.dimensions.length).toFixed(1)}
+            </text>
           </g>
         )}
+        
+        {/* Vertical chain dimensions */}
+        {usefulArea && (
+          <g>
+            {/* Distance from top edge to useful area */}
+            <line
+              x1={-35}
+              y1={0}
+              x2={-35}
+              y2={usefulArea.position.y * scale}
+              stroke="hsl(var(--chart-3))"
+              strokeWidth="0.8"
+              strokeDasharray="3,2"
+            />
+            <text
+              x={-45}
+              y={(usefulArea.position.y / 2) * scale}
+              textAnchor="middle"
+              className="fill-chart-3 text-xs font-mono font-bold"
+              transform={`rotate(-90, -45, ${(usefulArea.position.y / 2) * scale})`}
+            >
+              {usefulArea.position.y.toFixed(1)}
+            </text>
+            
+            {/* Useful area width (internal) */}
+            <line
+              x1={-35}
+              y1={usefulArea.position.y * scale}
+              x2={-35}
+              y2={(usefulArea.position.y + usefulArea.dimensions.width) * scale}
+              stroke="hsl(var(--chart-2))"
+              strokeWidth="1.2"
+            />
+            <text
+              x={-45}
+              y={(usefulArea.position.y + usefulArea.dimensions.width / 2) * scale}
+              textAnchor="middle"
+              className="fill-chart-2 text-xs font-mono font-bold"
+              transform={`rotate(-90, -45, ${(usefulArea.position.y + usefulArea.dimensions.width / 2) * scale})`}
+            >
+              {usefulArea.dimensions.width.toFixed(1)}
+            </text>
+            
+            {/* Distance from useful area to bottom edge */}
+            <line
+              x1={-35}
+              y1={(usefulArea.position.y + usefulArea.dimensions.width) * scale}
+              x2={-35}
+              y2={svgHeight}
+              stroke="hsl(var(--chart-3))"
+              strokeWidth="0.8"
+              strokeDasharray="3,2"
+            />
+            <text
+              x={-45}
+              y={(usefulArea.position.y + usefulArea.dimensions.width + (layoutSpec.totalDimensions.width - usefulArea.position.y - usefulArea.dimensions.width) / 2) * scale}
+              textAnchor="middle"
+              className="fill-chart-3 text-xs font-mono font-bold"
+              transform={`rotate(-90, -45, ${(usefulArea.position.y + usefulArea.dimensions.width + (layoutSpec.totalDimensions.width - usefulArea.position.y - usefulArea.dimensions.width) / 2) * scale})`}
+            >
+              {(layoutSpec.totalDimensions.width - usefulArea.position.y - usefulArea.dimensions.width).toFixed(1)}
+            </text>
+          </g>
+        )}
+      </g>
+      
+      {/* Extension lines for chain dimensions */}
+      <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" opacity="0.6">
+        {usefulArea && (
+          <>
+            {/* Horizontal extension lines */}
+            <line x1={usefulArea.position.x * scale} y1={0} x2={usefulArea.position.x * scale} y2={-25} />
+            <line x1={(usefulArea.position.x + usefulArea.dimensions.length) * scale} y1={0} x2={(usefulArea.position.x + usefulArea.dimensions.length) * scale} y2={-25} />
+            
+            {/* Vertical extension lines */}
+            <line x1={0} y1={usefulArea.position.y * scale} x2={-45} y2={usefulArea.position.y * scale} />
+            <line x1={0} y1={(usefulArea.position.y + usefulArea.dimensions.width) * scale} x2={-45} y2={(usefulArea.position.y + usefulArea.dimensions.width) * scale} />
+          </>
+        )}
+      </g>
+      
+      {/* Enhanced tick marks with coordinate labels */}
+      <g className="coordinate-ticks">
+        {/* Major tick marks for total length with coordinates */}
+        {Array.from({ length: Math.ceil(layoutSpec.totalDimensions.length) + 1 }, (_, i) => {
+          const x = i * scale
+          const isMainTick = i % 5 === 0
+          return (
+            <g key={`tick-h-${i}`}>
+              <line
+                x1={x}
+                y1={svgHeight + (isMainTick ? 15 : 20)}
+                x2={x}
+                y2={svgHeight + 30}
+                stroke="hsl(var(--foreground))"
+                strokeWidth={isMainTick ? "1.5" : "0.8"}
+              />
+              {isMainTick && (
+                <text
+                  x={x}
+                  y={svgHeight + 50}
+                  textAnchor="middle"
+                  className="fill-foreground text-xs font-mono"
+                >
+                  {i}m
+                </text>
+              )}
+            </g>
+          )
+        })}
+
+        {/* Major tick marks for total width with coordinates */}
+        {Array.from({ length: Math.ceil(layoutSpec.totalDimensions.width) + 1 }, (_, i) => {
+          const y = i * scale
+          const isMainTick = i % 5 === 0
+          return (
+            <g key={`tick-v-${i}`}>
+              <line
+                x1={isMainTick ? -35 : -30}
+                y1={y}
+                x2={-20}
+                y2={y}
+                stroke="hsl(var(--foreground))"
+                strokeWidth={isMainTick ? "1.5" : "0.8"}
+              />
+              {isMainTick && (
+                <text
+                  x={-50}
+                  y={y + 3}
+                  textAnchor="middle"
+                  className="fill-foreground text-xs font-mono"
+                >
+                  {i}m
+                </text>
+              )}
+            </g>
+          )
+        })}
       </g>
     </g>
   )

@@ -19,101 +19,183 @@ export default function AnnotationsLayer({
 
   return (
     <g className="annotations-layer">
-      {/* North arrow */}
-      <g transform={`translate(${svgWidth - 60}, 30)`}>
-        <circle cx="0" cy="0" r="25" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="1"/>
+      {/* Professional North arrow */}
+      <g transform={`translate(${svgWidth - 70}, 40)`}>
+        {/* Outer compass ring */}
+        <circle cx="0" cy="0" r="30" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="2"/>
+        <circle cx="0" cy="0" r="25" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" strokeDasharray="2,1"/>
         
-        {/* Arrow pointing north */}
+        {/* Cardinal directions */}
+        <g className="cardinal-marks">
+          {['N', 'E', 'S', 'W'].map((dir, i) => {
+            const angle = i * 90
+            const radius = 20
+            const x = Math.sin((angle * Math.PI) / 180) * radius
+            const y = -Math.cos((angle * Math.PI) / 180) * radius
+            return (
+              <text
+                key={dir}
+                x={x}
+                y={y + 3}
+                textAnchor="middle"
+                className={`${dir === 'N' ? 'fill-primary text-sm font-bold' : 'fill-muted-foreground text-xs'}`}
+              >
+                {dir}
+              </text>
+            )
+          })}
+        </g>
+        
+        {/* North arrow - enhanced */}
         <defs>
           <marker
-            id="northArrow"
-            markerWidth="12"
-            markerHeight="10"
-            refX="10"
-            refY="5"
+            id="northArrowHead"
+            markerWidth="16"
+            markerHeight="12"
+            refX="14"
+            refY="6"
             orient="auto"
           >
             <polygon
-              points="0 0, 12 5, 0 10"
-              fill="hsl(var(--foreground))"
+              points="0 0, 16 6, 0 12, 4 6"
+              fill="hsl(var(--primary))"
+              stroke="hsl(var(--primary-foreground))"
+              strokeWidth="0.5"
             />
           </marker>
         </defs>
         
+        {/* Main north arrow */}
         <line
           x1="0"
-          y1="10"
+          y1="12"
           x2="0"
-          y2="-10"
-          stroke="hsl(var(--foreground))"
-          strokeWidth="2"
-          markerEnd="url(#northArrow)"
+          y2="-12"
+          stroke="hsl(var(--primary))"
+          strokeWidth="3"
+          markerEnd="url(#northArrowHead)"
         />
         
-        <text
-          x="0"
-          y="20"
-          textAnchor="middle"
-          className="fill-foreground text-xs font-bold"
-        >
-          N
-        </text>
-      </g>
-
-      {/* Scale bar */}
-      <g transform={`translate(30, ${svgHeight - 40})`}>
-        <rect x="-5" y="-15" width="110" height="25" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="1" rx="3"/>
-        
-        {/* Scale increments */}
-        <g>
-          {Array.from({ length: 6 }, (_, i) => (
-            <g key={i}>
-              <rect
-                x={i * 15}
-                y={0}
-                width="15"
-                height="8"
-                fill={i % 2 === 0 ? 'hsl(var(--foreground))' : 'hsl(var(--background))'}
-                stroke="hsl(var(--border))"
-                strokeWidth="0.5"
-              />
-              <text
-                x={i * 15}
-                y={-2}
-                className="fill-foreground text-xs font-mono"
-                textAnchor="middle"
-              >
-                {i * 2}
-              </text>
-            </g>
-          ))}
+        {/* Compass rose decoration */}
+        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.5">
+          {Array.from({ length: 8 }, (_, i) => {
+            const angle = i * 45
+            const innerRadius = i % 2 === 0 ? 15 : 10
+            const outerRadius = 22
+            const x1 = Math.sin((angle * Math.PI) / 180) * innerRadius
+            const y1 = -Math.cos((angle * Math.PI) / 180) * innerRadius
+            const x2 = Math.sin((angle * Math.PI) / 180) * outerRadius
+            const y2 = -Math.cos((angle * Math.PI) / 180) * outerRadius
+            return (
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />
+            )
+          })}
         </g>
         
-        <text
-          x="75"
-          y="-5"
-          className="fill-foreground text-xs font-bold"
-          textAnchor="end"
-        >
-          metros
-        </text>
+        {/* Center dot */}
+        <circle cx="0" cy="0" r="2" fill="hsl(var(--primary))"/>
       </g>
 
-      {/* Project title block */}
-      <g transform="translate(30, 30)">
-        <rect width="200" height="80" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="1" rx="4"/>
+      {/* Professional scale bar */}
+      <g transform={`translate(40, ${svgHeight - 50})`}>
+        <rect x="-10" y="-20" width="200" height="35" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="1.5" rx="4"/>
         
-        <text x="10" y="20" className="fill-foreground text-sm font-bold">
+        {/* Scale title */}
+        <text x="90" y="-5" textAnchor="middle" className="fill-foreground text-sm font-bold">
+          ESCALA GRÁFICA
+        </text>
+        
+        {/* Main scale bar */}
+        <g transform="translate(10, 2)">
+          {/* Primary increments (meters) */}
+          {Array.from({ length: 11 }, (_, i) => {
+            const width = 15
+            const isMainTick = i % 5 === 0
+            return (
+              <g key={i}>
+                <rect
+                  x={i * width}
+                  y={0}
+                  width={width}
+                  height={isMainTick ? "10" : "8"}
+                  fill={i % 2 === 0 ? 'hsl(var(--foreground))' : 'hsl(var(--background))'}
+                  stroke="hsl(var(--border))"
+                  strokeWidth="0.5"
+                />
+                {isMainTick && (
+                  <text
+                    x={i * width}
+                    y={-3}
+                    className="fill-foreground text-xs font-mono font-bold"
+                    textAnchor="middle"
+                  >
+                    {i}
+                  </text>
+                )}
+              </g>
+            )
+          })}
+          
+          {/* Scale labels */}
+          <text x="80" y="-8" textAnchor="middle" className="fill-muted-foreground text-xs">
+            metros
+          </text>
+          <text x="170" y="6" className="fill-muted-foreground text-xs font-mono">
+            0────5────10m
+          </text>
+        </g>
+        
+        {/* Secondary scale (half increments) */}
+        <g transform="translate(10, 12)">
+          {Array.from({ length: 21 }, (_, i) => {
+            const width = 7.5
+            return (
+              <rect
+                key={i}
+                x={i * width}
+                y={0}
+                width={width}
+                height="4"
+                fill={i % 2 === 0 ? 'hsl(var(--muted))' : 'hsl(var(--muted-foreground))'}
+                stroke="none"
+              />
+            )
+          })}
+          <text x="80" y="-2" textAnchor="middle" className="fill-muted-foreground text-xs">
+            subdivisões 0,5m
+          </text>
+        </g>
+      </g>
+
+      {/* Enhanced project title block */}
+      <g transform="translate(40, 40)">
+        <rect width="280" height="100" fill="hsl(var(--card))" stroke="hsl(var(--border))" strokeWidth="2" rx="6"/>
+        <rect x="2" y="2" width="276" height="96" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" rx="4"/>
+        
+        {/* Header bar */}
+        <rect x="0" y="0" width="280" height="25" fill="hsl(var(--primary))" rx="6 6 0 0"/>
+        <text x="140" y="17" textAnchor="middle" className="fill-primary-foreground text-sm font-bold">
+          PROJETO TÉCNICO
+        </text>
+        
+        {/* Project information */}
+        <text x="15" y="45" className="fill-foreground text-base font-bold">
           {layoutSpec.title}
         </text>
-        <text x="10" y="35" className="fill-muted-foreground text-xs">
+        <text x="15" y="62" className="fill-muted-foreground text-sm">
           {layoutSpec.description}
         </text>
-        <text x="10" y="50" className="fill-muted-foreground text-xs">
-          Escala: {layoutSpec.scale}
+        <text x="15" y="78" className="fill-muted-foreground text-xs">
+          Escala: {layoutSpec.scale} | Data: {new Date().toLocaleDateString('pt-BR')}
         </text>
-        <text x="10" y="65" className="fill-muted-foreground text-xs">
-          Data: {new Date().toLocaleDateString('pt-BR')}
+        <text x="15" y="92" className="fill-muted-foreground text-xs">
+          Área Total: {(layoutSpec.totalDimensions.length * layoutSpec.totalDimensions.width).toFixed(1)} m²
+        </text>
+        
+        {/* Professional seal area */}
+        <circle cx="240" cy="70" r="20" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1" strokeDasharray="3,2"/>
+        <text x="240" y="73" textAnchor="middle" className="fill-muted-foreground text-xs">
+          ART
         </text>
       </g>
 
